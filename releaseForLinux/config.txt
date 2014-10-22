@@ -31,12 +31,12 @@
         "outPath":"\/var\/www\/AutoReleaseReady\/Result\/mybb",
         "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/mybb",
         "gitFilePath":"\/var\/www\/git\/tapatalk-mybb",
-        "gitBranch":"test",
+        "gitBranch":"master",
         "versionFiles":{
             "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*\\w+_)([\\d\\.]+)(.*)\/",
             "inc\/plugins\/tapatalk.php":"\/(['\"]version['\"]\\s*=>\\s*['\"])([\\d\\.]+)(.*)\/"
         },
-        "lastReleaseGitVersion":"65412886383d58d1d33c520ada041a623dff6f5a"
+        "lastReleaseGitVersion":"f7164081cd412ef36335571c527863cdac89ecab"
     },
     "ip":{
         "name":"ipb",
@@ -57,6 +57,63 @@
         "ignore_files":[
             "ChangeLog.txt"
         ],
-        "lastReleaseGitVersion":"4b9dda7f89f24977dd637bba0ecda2558829c052"
+        "lastReleaseGitVersion":"163a6c8bbfbd65c3c8b8ff0a7207a1424ac951fe"
+    },
+    "pb":{
+        "name":"phpBB",
+        "root":"\/var\/www\/git\/plugin\/phpBB\/3.1\/upload",
+        "outPath":"\/var\/www\/AutoReleaseReady\/Result\/phpBB",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/phpBB",
+        "gitFilePath":"\/var\/www\/git\/plugin",
+        "gitBranch":"master",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*\\w+_)([\\d\\.]+)(.*)\/",
+            "ext\/tapatalk\/tapatalk\/composer.json":"\/(['\"]version['\"]\\s*:\\s*['\"])([\\d\\.]+)(['\"]\\s*,)\/",
+            "extra_modify":{
+                "ext\/tapatalk\/tapatalk\/composer.json":{
+                    "\/(['\"]time['\"]\\s*:\\s*['\"])([^\"']*)(['\"]\\s*,)\/":"_${1}_formatData_Y-m-d_${3}"
+                }
+            }
+        },
+        "lastReleaseGitVersion":"2029d792a64ca2431290e2f1057d1efb1c86d326"
+    },
+    "sm20a":{
+        "name":"smf2",
+        "root":"\/var\/www\/git\/tapatalk-smf2",
+        "outPath":"\/var\/www\/AutoReleaseReady\/Result\/smf2",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/smf2",
+        "gitFilePath":"\/var\/www\/git\/tapatalk-smf2",
+        "gitBranch":"test",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*[^_]+_)([\\d\\.]+)(.*)\/",
+            "package-info.xml":"\/(<version>)([\\d\\.]+)(<\\\/version>)\/"
+        },
+        "lastReleaseGitVersion":"4ff9b11a838a3f7e76ebc59b4d620c84742a65df"
+    },
+    "vb3x":{
+        "name":"vb3x",
+        "root":"\/var\/www\/git\/plugin\/vb3x",
+        "outPath":"\/var\/www\/AutoReleaseReady\/Result\/vb3x",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/vb3x",
+        "gitFilePath":"\/var\/www\/git\/plugin",
+        "gitBranch":"test",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*[^_]+_)([\\d\\.]+)(.*)\/",
+            "mobiquo\/product-tapatalk.xml":"\/(<version>)([\\d\\.]+)(<\\\/version>)\/"
+        },
+        "lastReleaseGitVersion":"69cfd42cbdaf6a7c8272f4d63f24f1beb013c9d3"
+    },
+    "vb40":{
+        "name":"vb40",
+        "root":"\/var\/www\/git\/plugin\/vb40",
+        "outPath":"\/var\/www\/AutoReleaseReady\/Result\/vb40",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/vb40",
+        "gitFilePath":"\/var\/www\/git\/plugin",
+        "gitBranch":"test",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*[^_]+_)([\\d\\.]+)(.*)\/",
+            "mobiquo\/product-tapatalk.xml":"\/(<version>)([\\d\\.]+)(<\\\/version>)\/"
+        },
+        "lastReleaseGitVersion":"3482681dda881d22991efeef97ad4254a032cb04"
     }
 }

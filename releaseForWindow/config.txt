@@ -2,7 +2,7 @@
     "xf":{
         "name":"xenforo",
         "root":"C:\/Git\/test\/Hello-World\/xenforo",
-        "outPath":"C:\/xampp\/htdocs\/AutoBuildTest\/releaseForWindow2\/Result\/xenforo",
+        "outPath":"C:\/xampp\/htdocs\/AutoRelease\/releaseForWindow\/Result\/xenforo",
         "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/xenforo",
         "gitFilePath":"C:\/Git\/test\/Hello-World",
         "gitBranch":"master",
@@ -23,12 +23,12 @@
         "ignore_files":[
             "mobiquo\/printScreen"
         ],
-        "lastReleaseGitVersion":"b0e64dc628a85ba8e5a2d6c8ebd9175f5a564311"
+        "lastReleaseGitVersion":"f08ae66e81e83d37cd856a9cc530137a01b62153"
     },
     "mb":{
         "name":"mybb",
         "root":"C:\/Git\/test-mybb",
-        "outPath":"C:\/xampp\/htdocs\/AutoBuildTest\/releaseForWindow2\/Result\/mybb",
+        "outPath":"C:\/xampp\/htdocs\/AutoRelease\/releaseForWindow\/Result\/mybb",
         "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/mybb",
         "gitFilePath":"C:\/Git\/test-mybb",
         "gitBranch":"master",
@@ -41,7 +41,7 @@
     "ip":{
         "name":"ipb",
         "root":"C:\/Git\/test-plugin\/IPBoard\/ipb_3.4",
-        "outPath":"C:\/xampp\/htdocs\/AutoBuildTest\/releaseForWindow2\/Result\/ipb",
+        "outPath":"C:\/xampp\/htdocs\/AutoRelease\/releaseForWindow\/Result\/ipb",
         "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/ipb",
         "gitFilePath":"C:\/Git\/test-plugin",
         "gitBranch":"master",
@@ -58,5 +58,36 @@
             "ChangeLog.txt"
         ],
         "lastReleaseGitVersion":"b2cdeafda7ed4428418bde91c9c385ee0d9e1b87"
+    },
+    "pb":{
+        "name":"phpBB",
+        "root":"C:\/Git\/test-plugin\/phpBB\/3.1\/upload",
+        "outPath":"C:\/xampp\/htdocs\/AutoRelease\/releaseForWindow\/Result\/phpBB",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/phpBB",
+        "gitFilePath":"C:\/Git\/test-plugin",
+        "gitBranch":"master",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*\\w+_)([\\d\\.]+)(.*)\/",
+            "ext\/tapatalk\/tapatalk\/composer.json":"\/(['\"]version['\"]\\s*:\\s*['\"])([\\d\\.]+)(['\"]\\s*,)\/",
+            "extra_modify":{
+                "ext\/tapatalk\/tapatalk\/composer.json":{
+                    "\/(['\"]time['\"]\\s*:\\s*['\"])([^\"']+)(['\"]\\s*,)\/":"_${1}_formatData_Y-m-d_${3}"
+                }
+            }
+        },
+        "lastReleaseGitVersion":"a4d28f23d2aa4db0b9f0d1b4032d8813a64b734b"
+    },
+    "sm20a":{
+        "name":"smf2",
+        "root":"C:\/Git\/test-smf2",
+        "outPath":"C:\/xampp\/htdocs\/AutoRelease\/releaseForWindow\/Result\/smf2",
+        "resultHttpRoot":"http:\/\/dbd.tapatest.com\/AutoReleaseReady\/Result\/smf2",
+        "gitFilePath":"C:\/Git\/test-smf2",
+        "gitBranch":"master",
+        "versionFiles":{
+            "mobiquo\/config\/config.txt":"\/(version\\s*=\\s*[^_]+_)([\\d\\.]+)(.*)\/",
+            "package-info.xml":"\/(<version>)([\\d\\.]+)(<\\\/version>)\/"
+        },
+        "lastReleaseGitVersion":"49bbd823c1183f0f7874773df5a342a5148cac74"
     }
 }

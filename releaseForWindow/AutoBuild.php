@@ -4,12 +4,13 @@ include_once './BuildZip.php';
 include_once './MyGit.php';
 include_once './KLogger.php';
 include_once './Tools.php';
+include_once './PHPFilesSyntaxCheck.php';
 
 set_time_limit(0);
 $ds=DIRECTORY_SEPARATOR;
-$filename="C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForWindow2{$ds}start.txt";
-$configFile="C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForWindow2{$ds}config.txt";
-$logFile = "C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForWindow2{$ds}log";
+$filename="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}start.txt";
+$configFile="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}config.txt";
+$logFile = "C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}log";
 
 
 while (true){
@@ -48,7 +49,8 @@ while (true){
                                     'plugin_version'=>$version));
     $zipName = "$outName.zip";
 
-    $autoBuild = new AutoBuild($forumSetting[$forumType]['root'],
+    $autoBuild = new AutoBuild($forumSetting[$forumType]['name'],
+    $forumSetting[$forumType]['root'],
     $forumSetting[$forumType]['outPath'].$ds.$zipName,
     $forumSetting[$forumType]['resultHttpRoot'],
     $forumSetting[$forumType]['gitFilePath'],
@@ -71,10 +73,11 @@ while (true){
     unset($txt_arr[0]);
 
     file_put_contents($filename, $txt_arr);
-    
+
 }
 
 class AutoBuild{
+    private $forumName = "";
     private $gitResults = "";
     private $root = "";
     private $gitFilePath = "";
@@ -95,7 +98,8 @@ class AutoBuild{
 
     public $ds = DIRECTORY_SEPARATOR;
      
-    public function __construct($root, $outPath, $resultHttpRoot, $gitFilePath, $gitBranch = 'master', $sumFiles, $fileSumPath, $forumSystem, $version, $versionFiles, $lastReleaseGitVersion, $configFile, $logFile, $ignoreFiles = array()){
+    public function __construct($forumName, $root, $outPath, $resultHttpRoot, $gitFilePath, $gitBranch = 'master', $sumFiles, $fileSumPath, $forumSystem, $version, $versionFiles, $lastReleaseGitVersion, $configFile, $logFile, $ignoreFiles = array()){
+        $this->forumName = $forumName;
         $this->root = $root;
         $this->outPath = $outPath;
         $this->resultHttpRoot = $resultHttpRoot;
@@ -149,6 +153,13 @@ class AutoBuild{
         $myGit = new MyGit('"C:\Program Files (x86)\Git\bin\sh.exe" --login -i', $this->gitFilePath);
         $this->addGitResult($myGit->run_command("git checkout {$this->gitBranch}"));
         $this->addGitResult($myGit->run_command("git pull origin {$this->gitBranch}"));
+
+        //PHP syntax check
+        $myPHP = new PHPFilesSyntaxCheck("C:/xampp/php", $this->ignoreFiles);
+        $phpSyntaxCheckResult = $myPHP->syntaxCheck(array($root), strlen($root)+1);
+        if ($phpSyntaxCheckResult !== true){
+            return $this->getError($myGit, 'find some syntax error', array('syntaxError' => $phpSyntaxCheckResult));
+        }
 
         //output git log
         $outputResult = $this->outputLog($myGit, $this->lastReleaseGitVersion, $this->root);
@@ -312,12 +323,12 @@ class AutoBuild{
             $this->addGitResult($gitResult);
             return;
         }
-        if (strstr($gitResult['result_text'], "v".$this->version) === false){
-            $this->addGitResult($myGit->run_command("git tag -a v{$this->version} -m 'release {$this->forumSystem} v{$this->version}'"));
+        if (strstr($gitResult['result_text'], $this->forumName."v".$this->version) === false){
+            $this->addGitResult($myGit->run_command("git tag -a {$this->forumName}v{$this->version} -m 'release {$this->forumSystem} v{$this->version}'"));
             $this->addGitResult($myGit->run_command("git push origin --tags"));
         }
     }
-    
+
     private function getError($myGit, $error, $result = array()){
         $this->addGitResult($myGit->run_command("git reset --hard origin/master"));
         $result['result'] = false;
@@ -345,9 +356,9 @@ Class Modify{
 
         $strArr=preg_split('/_/', substr($operate, 1));
         $param = array();
-        
+
         foreach ($strArr as $value){
-            if ($value[0] == '$'){                
+            if ($value[0] == '$'){
                 if (count($param)>=1){
                     $functionName = $param[0];
                     if (method_exists('Modify', $functionName)){
@@ -358,7 +369,7 @@ Class Modify{
                 $result .= $value;
                 continue;
             }
-            
+
             //^number 表示extra_content从后向前数第number的值
             $match = array();
             preg_match('/\^\{(\d+)\}/', $value, $match);
@@ -383,12 +394,20 @@ Class Modify{
     }
 
     /**
-     * 
+     *
      * 计算表达式的int结果
      * @param array $params, $params[1]为运算表达式，如10+2*8
      */
     public static function calculate(array $params){
         if (count($params)<2)    return false;
         return eval("return {$params[1]};");
+    }
+
+    /**
+     * 获取当前日期
+     */
+    public static function formatData(array $params){
+        if (count($params)<2)    return false;
+        return gmdate($params[1], time() + 3600 * 8);
     }
 }

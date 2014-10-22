@@ -1,7 +1,7 @@
 <?php
 include_once './Tools.php';
 $ds = DIRECTORY_SEPARATOR;
-$outPath="C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForLinux2{$ds}config.txt";
+$outPath="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForLinux{$ds}config.txt";
 if(Config::generateConfigTxt($outPath) === false){
     echo 'fail';
 }else{
@@ -44,7 +44,7 @@ class Config{
                 'outPath'=>"/var/www/AutoReleaseReady/Result/xenforo",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/xenforo",
                 'gitFilePath'=>"/var/www/git/xenforo",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*xf10_)([\d|\.]+)(.*)/',
                     "addon-Tapatalk.xml" => '/(title=[\'"]Tapatalk[\'"].*version_string\s*=\s*")([\d|\.]+)(.*)/',
@@ -70,12 +70,12 @@ class Config{
                 'outPath'=>"/var/www/AutoReleaseReady/Result/mybb",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/mybb",
                 'gitFilePath'=>"/var/www/git/tapatalk-mybb",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*\w+_)([\d\.]+)(.*)/',
                     "inc/plugins/tapatalk.php" => '/([\'"]version[\'"]\s*=>\s*[\'"])([\d\.]+)(.*)/',
                 ),
-                'lastReleaseGitVersion' => "65412886383d58d1d33c520ada041a623dff6f5a",
+                'lastReleaseGitVersion' => "f7164081cd412ef36335571c527863cdac89ecab",
             ),
             'ip' => array(
                 'name' => 'ipb',
@@ -96,7 +96,64 @@ class Config{
                 'ignore_files' => array(
                     'ChangeLog.txt',
                 ),
-                'lastReleaseGitVersion' => "4b9dda7f89f24977dd637bba0ecda2558829c052",
+                'lastReleaseGitVersion' => "163a6c8bbfbd65c3c8b8ff0a7207a1424ac951fe",
+            ),
+            'pb' => array(
+                'name' => 'phpBB',
+                'root' => "/var/www/git/plugin/phpBB/3.1/upload",
+                'outPath'=>"/var/www/AutoReleaseReady/Result/phpBB",
+                'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/phpBB",
+                'gitFilePath'=>"/var/www/git/plugin",
+                'gitBranch' => 'master',
+                'versionFiles' => array(
+                    "mobiquo/config/config.txt" => '/(version\s*=\s*\w+_)([\d\.]+)(.*)/',
+                    "ext/tapatalk/tapatalk/composer.json" => '/([\'"]version[\'"]\s*:\s*[\'"])([\d\.]+)([\'"]\s*,)/',
+                    "extra_modify" => array(
+                        "ext/tapatalk/tapatalk/composer.json" => array(
+                        '/([\'"]time[\'"]\s*:\s*[\'"])([^"\']*)([\'"]\s*,)/' => '_${1}_formatData_Y-m-d_${3}',
+                        )
+                    )
+                ),
+                'lastReleaseGitVersion' => "",
+            ),
+            'sm20a' => array(
+                'name' => 'smf2',
+                'root' => "/var/www/git/tapatalk-smf2",
+                'outPath'=>"/var/www/AutoReleaseReady/Result/smf2",
+                'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/smf2",
+                'gitFilePath'=>"/var/www/git/tapatalk-smf2",
+                'gitBranch' => 'test',
+                'versionFiles' => array(
+                    "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
+                    "package-info.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
+                ),
+                'lastReleaseGitVersion' => "4ff9b11a838a3f7e76ebc59b4d620c84742a65df",
+            ),
+            'vb3x' => array(
+                'name' => 'vb3x',
+                'root' => "/var/www/git/plugin/vb3x",
+                'outPath'=>"/var/www/AutoReleaseReady/Result/vb3x",
+                'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/vb3x",
+                'gitFilePath'=>"/var/www/git/plugin",
+                'gitBranch' => 'test',
+                'versionFiles' => array(
+                    "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
+                    "mobiquo/product-tapatalk.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
+                ),
+                'lastReleaseGitVersion' => "69cfd42cbdaf6a7c8272f4d63f24f1beb013c9d3",
+            ),
+            'vb40' => array(
+                'name' => 'vb40',
+                'root' => "/var/www/git/plugin/vb40",
+                'outPath'=>"/var/www/AutoReleaseReady/Result/vb40",
+                'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/vb40",
+                'gitFilePath'=>"/var/www/git/plugin",
+                'gitBranch' => 'test',
+                'versionFiles' => array(
+                    "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
+                    "mobiquo/product-tapatalk.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
+                ),
+                'lastReleaseGitVersion' => "3482681dda881d22991efeef97ad4254a032cb04",
             ),
         );
     }

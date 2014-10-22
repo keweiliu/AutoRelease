@@ -1,8 +1,8 @@
 <?php
 require_once './Tools.php';
 $ds=DIRECTORY_SEPARATOR;
-$filename="C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForWindow2{$ds}start.txt";
-$configFile="C:{$ds}xampp{$ds}htdocs{$ds}AutoBuildTest{$ds}releaseForWindow2{$ds}config.txt";
+$filename="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}start.txt";
+$configFile="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}config.txt";
 if (!$file = fopen($filename, 'a')){
     echo 'open file fail';
     exit();
@@ -16,14 +16,22 @@ $result = array('result' => false);
 $fileContents = file_get_contents($configFile);
 $forumSetting = json_decode($fileContents, true);
 
-preg_match('/([a-zA-z]+)(\w+)/', $type, $match);
-if (count($match)<3){
-    $result['result_text'] = "parse forum type fail";
-    echo json_encode($result);
-    exit();
+$specialForum = array(
+    'sm20a' => '2.0',
+);
+if (array_key_exists($type, $specialForum)){
+    $forumType = $type;
+    $forumVersion = $specialForum[$type];
+}else{
+    preg_match('/([a-zA-z]+)(\w+)/', $type, $match);
+    if (count($match)<3){
+        $result['result_text'] = "parse forum type fail";
+        echo json_encode($result);
+        exit();
+    }
+    $forumType = $match[1];
+    $forumVersion = $match[2];
 }
-$forumType = $match[1];
-$forumVersion = $match[2];
 
 if (!isset($forumType) || !array_key_exists($forumType, $forumSetting)){
     $result['result_text'] = "incorrect forum type";
