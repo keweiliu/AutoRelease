@@ -81,15 +81,10 @@ class Tools{
      * Enter description here ...
      * @param array $params
      */
-    public static function getOutName(array $params){
-        $forumName = isset($params['forum_name']) && !empty($params['forum_name']) ? $params['forum_name'] : "";
-        $forumVersion = isset($params['forum_version']) && !empty($params['forum_version']) ? $params['forum_version'] : "";
-        $pluginVersion = isset($params['plugin_version']) && !empty($params['plugin_version']) ? $params['plugin_version'] : "";
+    public static function getOutName($forumName, $pluginVersion){
         if (empty($forumName)){
             return "tapatalk_v$pluginVersion";
-        }else if (empty($forumVersion)){
-            return "tapatalk_{$forumName}_v{$pluginVersion}";
         }
-        return "tapatalk_$forumName-{$forumVersion}_v{$pluginVersion}";
+        return "tapatalk_{$forumName}_v{$pluginVersion}";
     }
 }

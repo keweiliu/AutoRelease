@@ -15,7 +15,7 @@ class PHPFilesSyntaxCheck{
     public function syntaxCheck(array $files, $exclusiveLength){
         $result = array();
         foreach ($files as $file){
-            $result = array_merge($result, $this->synaxCheckForOneFile($file));
+            $result = array_merge($result, $this->synaxCheckForOneFile($file, $exclusiveLength));
         }
         return empty($result) ? true : $result;
     }

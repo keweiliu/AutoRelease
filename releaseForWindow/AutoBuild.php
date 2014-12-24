@@ -12,7 +12,6 @@ $filename="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}star
 $configFile="C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}config.txt";
 $logFile = "C:{$ds}xampp{$ds}htdocs{$ds}AutoRelease{$ds}releaseForWindow{$ds}log";
 
-
 while (true){
     echo 'start<br>';
     $result = array('result' => false);
@@ -28,8 +27,13 @@ while (true){
         exit();
         continue;
     }
-    list($forumType,$forumVersion,$version,$date)=preg_split('/,/', $buffer);
 
+    list($forumType,$version,$date,$extend)=preg_split('/,/', $buffer);
+error_log('$extend:'.$extend);
+    $extends = array();
+    if (!empty(trim($extend))){
+        $extend = preg_split('/_/', trim($extend));
+    }
     $ds = DIRECTORY_SEPARATOR;
 
     $fileContents = file_get_contents($configFile);
@@ -38,42 +42,37 @@ while (true){
     if (!isset($forumType) || empty($forumType) || !array_key_exists($forumType, $forumSetting)){
         $result['result_text'] = "incorrect forum type";
         echo json_encode($result);
-    }
-    if (!isset($version) || empty($version) ){
+    }else if (!isset($version) || empty($version) ){
         $result['result_text'] = "incorrect version";
         echo json_encode($result);
+    }else{
+        $outName = Tools::getOutName($forumSetting[$forumType]['name'], $version);
+
+        $autoBuild = new AutoBuild($forumSetting[$forumType]['name'],
+        $forumSetting[$forumType]['root'],
+        $forumSetting[$forumType]['outPath'].$ds.$outName.".zip",
+        $forumSetting[$forumType]['resultHttpRoot'],
+        $forumSetting[$forumType]['gitFilePath'],
+        $forumSetting[$forumType]['gitBranch'],
+        isset($forumSetting[$forumType]['sumFiles']) && !empty($forumSetting[$forumType]['sumFiles']) ? $forumSetting[$forumType]['sumFiles'] : array(),
+        isset($forumSetting[$forumType]['fileSumPath']) && !empty($forumSetting[$forumType]['fileSumPath']) ? $forumSetting[$forumType]['fileSumPath'] : "",
+        $forumType,
+        $version,
+        $forumSetting[$forumType]['versionFiles'],
+        $forumSetting[$forumType]['lastReleaseGitVersion'],
+        $configFile,
+        $logFile,
+        isset($forumSetting[$forumType]['ignore_files']) ? $forumSetting[$forumType]['ignore_files'] : array(),
+        $extend);
+
+        $resultName = "$outName.txt";
+        $file = fopen($forumSetting[$forumType]['outPath'].$ds.$resultName, 'w');
+        $wirteResult = fwrite($file, json_encode($autoBuild->autoBuild()).'\n');
     }
-
-    $outName = Tools::getOutName(array('forum_name'=>$forumSetting[$forumType]['name'],
-                                    'forum_version'=>$forumVersion,
-                                    'plugin_version'=>$version));
-    $zipName = "$outName.zip";
-
-    $autoBuild = new AutoBuild($forumSetting[$forumType]['name'],
-    $forumSetting[$forumType]['root'],
-    $forumSetting[$forumType]['outPath'].$ds.$zipName,
-    $forumSetting[$forumType]['resultHttpRoot'],
-    $forumSetting[$forumType]['gitFilePath'],
-    $forumSetting[$forumType]['gitBranch'],
-    isset($forumSetting[$forumType]['sumFiles']) && !empty($forumSetting[$forumType]['sumFiles']) ? $forumSetting[$forumType]['sumFiles'] : array(),
-    isset($forumSetting[$forumType]['fileSumPath']) && !empty($forumSetting[$forumType]['fileSumPath']) ? $forumSetting[$forumType]['fileSumPath'] : "",
-    $forumType,
-    $version,
-    $forumSetting[$forumType]['versionFiles'],
-    $forumSetting[$forumType]['lastReleaseGitVersion'],
-    $configFile,
-    $logFile,
-    isset($forumSetting[$forumType]['ignore_files']) ? $forumSetting[$forumType]['ignore_files'] : array());
-
-    $resultName = "$outName.txt";
-    $file = fopen($forumSetting[$forumType]['outPath'].$ds.$resultName, 'w');
-    $wirteResult = fwrite($file, json_encode($autoBuild->autoBuild()).'\n');
 
     $txt_arr = file($filename);
     unset($txt_arr[0]);
-
     file_put_contents($filename, $txt_arr);
-
 }
 
 class AutoBuild{
@@ -95,10 +94,11 @@ class AutoBuild{
     private $resultHttpRoot = "";
     private $extra_content = array();
     private $ignoreFiles = array();
+    private $extends = array();
 
     public $ds = DIRECTORY_SEPARATOR;
      
-    public function __construct($forumName, $root, $outPath, $resultHttpRoot, $gitFilePath, $gitBranch = 'master', $sumFiles, $fileSumPath, $forumSystem, $version, $versionFiles, $lastReleaseGitVersion, $configFile, $logFile, $ignoreFiles = array()){
+    public function __construct($forumName, $root, $outPath, $resultHttpRoot, $gitFilePath, $gitBranch = 'master', $sumFiles, $fileSumPath, $forumSystem, $version, $versionFiles, $lastReleaseGitVersion, $configFile, $logFile, $ignoreFiles = array(), $extends = array()){
         $this->forumName = $forumName;
         $this->root = $root;
         $this->outPath = $outPath;
@@ -128,6 +128,14 @@ class AutoBuild{
             $this->versionFiles[$root.$ds.$key] = $value;
         }
         $this->configFile = $configFile;
+error_log('$extend:'.print_r($extends, true));
+        if (!empty($extends)) {
+            if (is_array($extends)){
+                $this->extends = array_merge($this->extends, $extends);
+            }else{
+                $this->extends[] = $extends;
+            }
+        }
     }
 
     public function autoBuild(){
@@ -155,14 +163,15 @@ class AutoBuild{
         $this->addGitResult($myGit->run_command("git pull origin {$this->gitBranch}"));
 
         //PHP syntax check
-        $myPHP = new PHPFilesSyntaxCheck("C:/xampp/php", $this->ignoreFiles);
+        $myPHP = new PHPFilesSyntaxCheck("C:/xampp/php", null, $this->ignoreFiles);
         $phpSyntaxCheckResult = $myPHP->syntaxCheck(array($root), strlen($root)+1);
         if ($phpSyntaxCheckResult !== true){
-            return $this->getError($myGit, 'find some syntax error', array('syntaxError' => $phpSyntaxCheckResult));
+//            return $this->getError($myGit, 'Finding some syntax error. '.print_r($phpSyntaxCheckResult, true), array('syntaxError' => $phpSyntaxCheckResult));
+            return $this->getError($myGit, 'Finding some syntax error. '.print_r($phpSyntaxCheckResult, true));
         }
 
         //output git log
-        $outputResult = $this->outputLog($myGit, $this->lastReleaseGitVersion, $this->root);
+        $outputResult = $this->outputLog($myGit, $this->lastReleaseGitVersion, $this->gitFilePath);
         if($outputResult["result"] === true){
             $result['result'] = true;
             $result['changeLog'] = $outputResult['result_text'];
@@ -217,6 +226,15 @@ class AutoBuild{
             unlink($fileSumPath);
         }
 
+error_log('$extend:'.print_r($this->extends, true));
+        if (in_array('onlyBundle', $this->extends)){
+            $this->addGitResult($myGit->run_command("git reset --hard origin/master"));
+            if (!empty($this->gitResults)){
+                return $this->getError($myGit, '', $result);
+            }
+            return $result;
+        }
+error_log('is_in:'.intval(in_array('onlyBundle', $this->extends)));
         //git push
         $this->addGitResult($myGit->run_command("git add ."));
         $this->addGitResult($myGit->run_command("git commit -m 'release {$this->forumSystem} v{$this->version}'"));
@@ -323,10 +341,14 @@ class AutoBuild{
             $this->addGitResult($gitResult);
             return;
         }
-        if (strstr($gitResult['result_text'], $this->forumName."v".$this->version) === false){
-            $this->addGitResult($myGit->run_command("git tag -a {$this->forumName}v{$this->version} -m 'release {$this->forumSystem} v{$this->version}'"));
-            $this->addGitResult($myGit->run_command("git push origin --tags"));
+        $tagName = $this->forumName."_v".$this->version;
+        if (strstr($gitResult['result_text'], $tagName) !== false){
+            $myGit->run_command('git tag -d '.$tagName);
+            $myGit->run_command('git push origin :refs/tags/'.$tagName);
         }
+
+        $this->addGitResult($myGit->run_command("git tag -a {$tagName} -m 'release {$this->forumSystem} v{$this->version}'"));
+        $this->addGitResult($myGit->run_command("git push origin --tags"));
     }
 
     private function getError($myGit, $error, $result = array()){
@@ -354,6 +376,19 @@ Class Modify{
             $operate = preg_replace('/\#\$\{'.$key.'\}/', $value, $operate);
         }
 
+        //^number 表示extra_content从后向前数第number的值
+        $match = array();
+        preg_match('/\^\{(\d+)\}/', $operate, $match);
+        if (count($match)>1){
+            foreach ($match as $key => $value){
+                if ($key == 0) continue;
+                $key = count($extra_content)-intval($match[$key]);
+                if (array_key_exists($key, $extra_content)){
+                    $operate = preg_replace('/\^\{\d+\}/', $extra_content[$key], $operate, 1);
+                }
+            }
+        }
+
         $strArr=preg_split('/_/', substr($operate, 1));
         $param = array();
 
@@ -367,17 +402,6 @@ Class Modify{
                 }
                 $param = array();
                 $result .= $value;
-                continue;
-            }
-
-            //^number 表示extra_content从后向前数第number的值
-            $match = array();
-            preg_match('/\^\{(\d+)\}/', $value, $match);
-            if (count($match)>1){
-                $key = count($extra_content)-$match[1];
-                if (array_key_exists($key, $extra_content)){
-                    $param[] = $extra_content[$key];
-                }
                 continue;
             }
 

@@ -38,15 +38,15 @@ class Config{
     public static function getConfig()
     {
         return array(
-            'xf' => array(
-                'name' => 'xenforo',
+            'xf10' => array(
+                'name' => 'xenforo-1.0',
                 'root' => "/var/www/git/xenforo/xenforo",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/xenforo",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/xenforo",
                 'gitFilePath'=>"/var/www/git/xenforo",
                 'gitBranch' => 'master',
                 'versionFiles' => array(
-                    "mobiquo/config/config.txt" => '/(version\s*=\s*xf10_)([\d|\.]+)(.*)/',
+                    "mobiquo/config/config.php" => '/([\'"]version[\'"]\s*=>\s*[\'"]xf10_)([\d|\.]+)(.*)/',
                     "addon-Tapatalk.xml" => '/(title=[\'"]Tapatalk[\'"].*version_string\s*=\s*")([\d|\.]+)(.*)/',
                     "extra_modify" => array(
                         "addon-Tapatalk.xml" => array(
@@ -62,10 +62,10 @@ class Config{
                 'ignore_files' => array(
                     'mobiquo/printScreen',
                 ),
-                'lastReleaseGitVersion' => "b54d460d32d370614e8f8a876b3405c41937b46e",
+                'lastReleaseGitVersion' => "1d7384f6d532f755483389664cb47b510603b7da",
             ),
-            'mb' => array(
-                'name' => 'mybb',
+            'mb16' => array(
+                'name' => 'mybb-1.x',
                 'root' => "/var/www/git/tapatalk-mybb",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/mybb",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/mybb",
@@ -75,31 +75,44 @@ class Config{
                     "mobiquo/config/config.txt" => '/(version\s*=\s*\w+_)([\d\.]+)(.*)/',
                     "inc/plugins/tapatalk.php" => '/([\'"]version[\'"]\s*=>\s*[\'"])([\d\.]+)(.*)/',
                 ),
-                'lastReleaseGitVersion' => "f7164081cd412ef36335571c527863cdac89ecab",
+                'lastReleaseGitVersion' => "a88b4db7fa0c5de324dd54a8618856de5d50b030",
             ),
-            'ip' => array(
-                'name' => 'ipb',
+            'ip34' => array(
+                'name' => 'ipb-3.4',
                 'root' => "/var/www/git/plugin/IPBoard/ipb_3.4",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/ipb",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/ipb",
                 'gitFilePath'=>"/var/www/git/plugin",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*\w+_)([\d\.]+)(.*)/',
-                    "extra_modify" => array(
+                        "extra_modify" => array(
                         "mobiquo/tapatalk.xml" => array(
-                        '/(<hook_version_long>)([\d]+)(<\/hook_version_long>)/' => '_${1}_calculate_(#${2}/100+1)*100_${3}',
-                        '/(<hook_version_human>)([\d\.]+)(<\/hook_version_human>)/' => '_${1}_genHookVersionByVersionLong_#${2}_${3}',
+                            '/(<hook_version_human>)([\d\.]+)(<\/hook_version_human>)/' => '_${1}_genHookVersionByVersionLong_#${2}_${3}',
+                            '/(<hook_version_long>)([\d]+)(<\/hook_version_long>)/' => '_${1}_calculate_(#${2}/100+1)*100_${3}',
+                        ),
+                        "mobiquo/config/config.txt" => array(
+                            '/(long_version\s*=\s*)([\d]+)(\s*)/' => '_${1}^{1}${3}',
                         )
                     )
                 ),
                 'ignore_files' => array(
                     'ChangeLog.txt',
                 ),
-                'lastReleaseGitVersion' => "163a6c8bbfbd65c3c8b8ff0a7207a1424ac951fe",
+                'lastReleaseGitVersion' => "5b8cf9e49d173ff9d6c7b3f1e05c2a0dcbaa769b",
             ),
-            'pb' => array(
-                'name' => 'phpBB',
+            'pb30' => array(
+                'name' => 'phpBB-3.0',
+                'root' => "/var/www/git/tapatalk-phpbb3",
+                'outPath'=>"/var/www/AutoReleaseReady/Result/phpBB",
+                'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/phpBB",
+                'gitFilePath'=>"/var/www/git/tapatalk-phpbb3/tapatalk-phpbb3",
+                'gitBranch' => 'master',
+                'versionFiles' => array(),
+                'lastReleaseGitVersion' => "d58c1b0af21c8a22b6b8f3100b12a6495a0350d8",
+            ),
+            'pb31' => array(
+                'name' => 'phpBB-3.1',
                 'root' => "/var/www/git/plugin/phpBB/3.1/upload",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/phpBB",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/phpBB",
@@ -110,50 +123,50 @@ class Config{
                     "ext/tapatalk/tapatalk/composer.json" => '/([\'"]version[\'"]\s*:\s*[\'"])([\d\.]+)([\'"]\s*,)/',
                     "extra_modify" => array(
                         "ext/tapatalk/tapatalk/composer.json" => array(
-                        '/([\'"]time[\'"]\s*:\s*[\'"])([^"\']*)([\'"]\s*,)/' => '_${1}_formatData_Y-m-d_${3}',
+                            '/([\'"]time[\'"]\s*:\s*[\'"])([^"\']*)([\'"]\s*,)/' => '_${1}_formatData_Y-m-d_${3}',
                         )
                     )
                 ),
-                'lastReleaseGitVersion' => "",
+                'lastReleaseGitVersion' => "a452070294c78ea838ff849e67a4053e12cf8d57",
             ),
-            'sm20a' => array(
-                'name' => 'smf2',
+            'sm-2a' => array(
+                'name' => 'smf-2a',
                 'root' => "/var/www/git/tapatalk-smf2",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/smf2",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/smf2",
                 'gitFilePath'=>"/var/www/git/tapatalk-smf2",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
                     "package-info.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
                 ),
-                'lastReleaseGitVersion' => "4ff9b11a838a3f7e76ebc59b4d620c84742a65df",
+                'lastReleaseGitVersion' => "aecb506221bf32f8ae2b38be5e5a4b548faaaf93",
             ),
             'vb3x' => array(
-                'name' => 'vb3x',
+                'name' => 'vb-3.x',
                 'root' => "/var/www/git/plugin/vb3x",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/vb3x",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/vb3x",
                 'gitFilePath'=>"/var/www/git/plugin",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
                     "mobiquo/product-tapatalk.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
                 ),
-                'lastReleaseGitVersion' => "69cfd42cbdaf6a7c8272f4d63f24f1beb013c9d3",
+                'lastReleaseGitVersion' => "f51810a28d129edb568148c874294632a38328f1",
             ),
             'vb40' => array(
-                'name' => 'vb40',
+                'name' => 'vb-4.0',
                 'root' => "/var/www/git/plugin/vb40",
                 'outPath'=>"/var/www/AutoReleaseReady/Result/vb40",
                 'resultHttpRoot' => "http://dbd.tapatest.com/AutoReleaseReady/Result/vb40",
                 'gitFilePath'=>"/var/www/git/plugin",
-                'gitBranch' => 'test',
+                'gitBranch' => 'master',
                 'versionFiles' => array(
                     "mobiquo/config/config.txt" => '/(version\s*=\s*[^_]+_)([\d\.]+)(.*)/',
                     "mobiquo/product-tapatalk.xml" => '/(<version>)([\d\.]+)(<\/version>)/',
                 ),
-                'lastReleaseGitVersion' => "3482681dda881d22991efeef97ad4254a032cb04",
+                'lastReleaseGitVersion' => "9eac412866ebbbe85b448614df7837d2a8ca73b5",
             ),
         );
     }
